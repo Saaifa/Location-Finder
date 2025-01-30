@@ -42,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<dynamic> getPlaceDetails(String place_id) async {
     final url = "https://maps.googleapis.com/maps/api/place/details/json"
-        "?place_id=$place_id&key=AIzaSyAh1fXPanw5wRfFfU1gmnh0z1jGDRHm76M"
+        "?place_id=$place_id&key=<Your Api Key>"
         "&fields=address_component,formatted_address";
 
     try {
