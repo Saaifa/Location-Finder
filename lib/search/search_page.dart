@@ -12,6 +12,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController _searchController = TextEditingController();
+  bool showSuggestedPlaces = true;
   List<dynamic> predictionResponse = [];
   Map<String, dynamic> placeDetailsResponse = {};
 
@@ -39,19 +40,17 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  Future<dynamic> getPlaceDetails(String place_id) async{
+  Future<dynamic> getPlaceDetails(String place_id) async {
     final url = "https://maps.googleapis.com/maps/api/place/details/json"
         "?place_id=$place_id&key=AIzaSyAh1fXPanw5wRfFfU1gmnh0z1jGDRHm76M"
         "&fields=address_component,formatted_address";
 
-    try{
+    try {
       final response = await client.get(url);
       Map<String, dynamic> jsonMap = jsonDecode(response.toString());
       placeDetailsResponse = jsonMap['result'];
       print('placeDetail $placeDetailsResponse');
-      setState(() {
-
-      });
+      setState(() {});
     } catch (e) {
       print(e);
     }
@@ -94,9 +93,11 @@ class _SearchPageState extends State<SearchPage> {
                     onChanged: (value) {
                       setState(() {
                         if (value.isNotEmpty) {
+                          showSuggestedPlaces = true;
                           print("object $value");
                           searchLocation(value);
                         } else {
+                          showSuggestedPlaces = false;
                           predictionResponse = [];
                         }
                       });
@@ -114,7 +115,7 @@ class _SearchPageState extends State<SearchPage> {
                 SizedBox(
                   height: 10.0,
                 ),
-                if (predictionResponse.isNotEmpty)
+                if (predictionResponse.isNotEmpty && showSuggestedPlaces)
                   Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -132,13 +133,14 @@ class _SearchPageState extends State<SearchPage> {
                               child: TextButton(
                                 onPressed: () {
                                   getPlaceDetails(location["place_id"]);
+                                  setState(() {
+                                    showSuggestedPlaces = false;
+                                  });
                                 },
                                 child: Text(
                                   "${location["description"]}",
                                   style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.black
-                                  ),
+                                      fontSize: 12.0, color: Colors.black),
                                 ),
                               ),
                             );
@@ -151,21 +153,22 @@ class _SearchPageState extends State<SearchPage> {
                 SizedBox(
                   height: 10.0,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    "${placeDetailsResponse["formatted_address"]}",
-                    style: TextStyle(
-                      fontSize: 12.0,
+                if (_searchController.text.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  ),
-                )
+                    padding: EdgeInsets.all(5.0),
+                    child: Text(
+                      "${placeDetailsResponse["formatted_address"]}",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  )
               ],
             ),
           ),
