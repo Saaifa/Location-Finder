@@ -20,7 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   Future<dynamic> searchLocation(String query) async {
     final url = 'https://maps.googleapis.com/maps/api/place/'
         'queryautocomplete/json?input=$query'
-        '&key=AIzaSyAh1fXPanw5wRfFfU1gmnh0z1jGDRHm76M&region='
+        '&key=<YourApiKey>'
         'in';
 
     try {
